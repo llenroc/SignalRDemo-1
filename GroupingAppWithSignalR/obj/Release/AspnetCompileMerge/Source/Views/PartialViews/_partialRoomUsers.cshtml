@@ -1,0 +1,14 @@
+﻿@model List<GroupingAppWithSignalR.Models.RoomUser>
+@{
+    Layout = null;
+}
+    
+@{
+    if (Model.Any())
+    {
+        foreach (var user in Model)
+        {
+            <li>@user.UserName</li>
+        }
+    }
+}

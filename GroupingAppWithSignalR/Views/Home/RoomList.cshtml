@@ -1,0 +1,78 @@
+﻿@model List<GroupingAppWithSignalR.Models.Room>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>房间列表</title>
+    <link href="~/Content/jquery.mobile-1.4.5.min.css" rel="stylesheet" />
+    <style>
+        .action-area{
+            position:absolute;
+            width:100%;
+            bottom:0;
+        }
+    </style>
+</head>
+<body>
+    <div class="list-container">
+        <div data-role="header">
+            <h1 id="userNameContainer"></h1>
+        </div>
+        <div class="ui-body ui-body-a ui-corner-all room-list" data-role="collapsible" data-collapsed="false">
+            <h4>房间列表</h4>
+            <ul data-role="listview">
+                @{
+                    if (Model.Any())
+                    {
+                        foreach (var room in Model)
+                        {
+                            <li class="room" data-id="@room.RoomId">
+                                <label>房间ID:@room.RoomId</label>
+                                <p>房主:@room.RoomLeader</p>
+                                <p>人数:@room.Users.Count() 人</p>
+                                <button class="join-room">加入房间</button>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="room">
+                            <label>暂时没有房间</label>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="action-area ui-grid-a ui-responsive">
+        <div class="ui-block-a create-room"><input type="button" data-icon="plus" value="创建房间"></div>
+        <div class="ui-block-b refresh-room"><input type="button" data-icon="refresh" value="刷新列表"></div>
+    </div>
+    <div data-history="false" data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all">
+        <form>
+            <div style="padding:10px 20px;">
+                <h3>填写信息</h3>
+                <label for="un" class="ui-hidden-accessible">用户名:</label>
+                <input type="text" name="user" id="un" value="" placeholder="用户名" data-theme="a">
+                <div class="ui-field-contain">
+                    <label for="select-native-1">段位:</label>
+                    <select name="select-level" id="selectLevel">
+                        <option value="倔强青铜I">倔强青铜I</option>
+                    </select>
+                </div>
+
+                <button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check confirm-data">确认</button>
+            </div>
+        </form>
+    </div>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery.mobile-1.4.5.min.js"></script>
+    <script src="~/Scripts/common.js"></script>
+    <script src="~/Scripts/GroupMapping/roomList.js"></script>
+</body>
+</html>
