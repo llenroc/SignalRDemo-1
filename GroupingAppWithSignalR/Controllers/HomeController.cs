@@ -46,7 +46,11 @@ namespace GroupingAppWithSignalR.Controllers
         [HttpPost]
         public async Task<JsonResult> CreateRoom(RoomUser user)
         {
-            var result = await roomService.CreateRoom(user);
+            var result = new GetOneResult<Room>();
+            if (ModelState.IsValid)
+            {
+                result = await roomService.CreateRoom(user);
+            }
             return Json(result);
         }
         public async Task<ActionResult> RenderRoomUsers(string roomId)
@@ -55,13 +59,26 @@ namespace GroupingAppWithSignalR.Controllers
                 return Content("id不对昂");
             return PartialView("~/Views/PartialViews/_partialRoomUsers.cshtml",await roomService.ListUsersInRoom(roomId));
         }
-        public ActionResult GetRoom(string roomId)
+        public ActionResult GetRoom(string roomId,string openId)
         {
-            return View();
+            if (StorageService.RegisteredUsers.Exists(u => u.OpenId == openId))
+            {
+                return View();
+            }
+            return RedirectToAction("Login", "Wechat", new { state = roomId });
         }
         public async Task<JsonResult> JoinRoom(string roomId, RoomUser user)
         {
-            return Json(await roomService.JoinRoom(roomId, user));
+            var result = new Result();
+            if (ModelState.IsValid)
+            {
+                result = await roomService.JoinRoom(roomId, user);
+            }
+            else
+            {
+                result.Message = "/Home/RoomList";
+            }
+            return Json(result);
         }
         public async Task<JsonResult> ResetRooms()
         {
@@ -71,6 +88,11 @@ namespace GroupingAppWithSignalR.Controllers
         public JsonResult GetAllRooms()
         {
             return Json(StorageService.RoomList, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult UpdateUserLevel(RoomUser user)
+        {
+            return Json(StorageService.Instance.UpdateUserLevel(user));
         }
     }
 }

@@ -8,7 +8,8 @@
             UserName: "",
             Stars: 1,
             UserLevel: '',
-            RoomId:'',
+            RoomId: '',
+            UnionId: '',
         },
         firstLogin: function () {
             return this.UserInfo.UserName == "";
@@ -43,9 +44,14 @@
         createRoom: function () {
             var _this = this;
             $.post('/Home/CreateRoom', _this.UserInfo).done(function (data) {
-                _this.UserInfo.RoomId = data.RoomId;
-                $.setCookie("userData", JSON.stringify(_this.UserInfo));
-                location.reload();
+                console.log(data)
+                if (data.Success) {
+                    _this.UserInfo.RoomId = data.Entity.RoomId;
+                    $.setCookie("userData", JSON.stringify(_this.UserInfo));
+                    location.reload();
+                } else {
+                    Location.href = '/Wechat/Login?state=' + location.pathname;
+                }
             })
         },
         bindEvents: function () {
@@ -79,7 +85,7 @@
             _this.roomList.delegate('button.join-room', 'click', function (e) {
                 e.preventDefault();
                 var rId = $(e.target).parents('li').data('id');
-                window.location.href = "/Home/GetRoom?roomId=" + rId;
+                window.location.href = "/Home/GetRoom?roomId=" + rId + "&unionId=" + _this.UserInfo.UnionId;
                 //$.post('/Home/JoinRoom', { roomId: rId, user: _this.UserInfo }).done(function (data) {
                 //    if (data.Status == 200 || data.Status == 303) {
                 //        window.location.href = "/Home/GetRoom?roomId=" + rId;
@@ -94,9 +100,7 @@
             var _this = this, userInfo = $.getCookie("userData");
             _this.buildLevel();
             if (userInfo == "" || userInfo == null) {
-                setTimeout(function () {
-                    _this.userInfoPopUp.popup("open")
-                },1000)
+                location.href = "/Wechat/Login?state=" + Math.round(Math.random() * 1000);
             } else {
                 _this.UserInfo = JSON.parse(userInfo);
                 _this.displayUserData();

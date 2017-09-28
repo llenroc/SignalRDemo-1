@@ -16,5 +16,10 @@ namespace GroupingAppWithSignalR.Models
         public string RoomId { get; set; }
         public string ConnectionId { get; set; }
         public int MMR { get; set; } = 0;
+        [Required]
+        public string Avatar { get; set; }
+        [Required]
+        public string OpenId { get; set; }
+
     }
 }

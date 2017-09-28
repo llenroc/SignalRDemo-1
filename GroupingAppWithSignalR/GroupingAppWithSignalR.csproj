@@ -185,6 +185,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\WechatController.cs" />
     <Compile Include="Enums\UserLevel.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -193,9 +194,12 @@
     <Compile Include="Models\Result.cs" />
     <Compile Include="Models\Room.cs" />
     <Compile Include="Models\RoomUser.cs" />
+    <Compile Include="Models\WechatInfo.cs" />
+    <Compile Include="Models\WechatTicket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\RoomService.cs" />
     <Compile Include="Services\StorageService.cs" />
+    <Compile Include="Services\WechatService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -426,7 +430,10 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scripts\sha1.js" />
     <Content Include="Views\PartialViews\_partialRoomUsers.cshtml" />
+    <None Include="Properties\PublishProfiles\assigngroups - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\assigngroups - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\common.js" />
@@ -467,6 +474,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Wechat\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

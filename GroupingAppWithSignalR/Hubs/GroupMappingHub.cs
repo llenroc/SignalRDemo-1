@@ -30,7 +30,7 @@ namespace GroupingAppWithSignalR.Hubs
             {
                 await Groups.Add(Context.ConnectionId, roomId);
                 var room = StorageService.RoomList.SingleOrDefault(r => r.RoomId == roomId);
-                if (room.RoomLeader == user.UserName)
+                if (room.LeaderId == user.OpenId)
                     Clients.Client(user.ConnectionId).renderRLActions(true);
                 Clients.Group(roomId).addNewMessageToPage("[房间]" + user.UserName, " 进入了房间");
                 Clients.Group(roomId).renderUserList();

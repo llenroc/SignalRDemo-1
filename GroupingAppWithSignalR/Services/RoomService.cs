@@ -41,19 +41,29 @@ namespace GroupingAppWithSignalR.Services
             }
             return id;
         }
-        public Task<Room> CreateRoom(RoomUser user)
+        public Task<GetOneResult<Room>> CreateRoom(RoomUser user)
         {
-            var room = new Room();
-            room.RoomId = GenerateRoomId();
-            room.RoomLeader = user.UserName;
-            room.Users.Add(user);
-            StorageService.RoomList.Add(room);
-            return Task.FromResult(room);
+            var result = new GetOneResult<Room>();
+            if (!string.IsNullOrWhiteSpace(user.OpenId))
+            {
+                var room = new Room();
+                room.RoomId = GenerateRoomId();
+                room.RoomLeader = user.UserName;
+                room.LeaderId = user.OpenId;
+                room.Users.Add(user);
+                StorageService.RoomList.Add(room);
+                result.Success = true;
+                result.Status = 200;
+                result.Entity = room;
+            }
+            
+            return Task.FromResult(result);
         }
         public Task<Result> JoinRoom(string roomId,RoomUser user)
         {
             var result = new Result();
             var room = StorageService.RoomList.SingleOrDefault(r => r.RoomId == roomId);
+            var exsitingUser = StorageService.RegisteredUsers.SingleOrDefault(u => u.OpenId == user.OpenId);
             if (room != null)
             {
                 if (room.Users.Count() > MaxUsersPerRoom)
@@ -62,24 +72,29 @@ namespace GroupingAppWithSignalR.Services
                 }
                 else
                 {
-                    if (room.Users.Exists(r => r.UserName == user.UserName))
+                    if (room.Users.Exists(r => r.OpenId == user.OpenId))
                     {
-                        var host = room.Users.SingleOrDefault(u => u.UserName == user.UserName);
+                        var host = room.Users.SingleOrDefault(u => u.OpenId == user.OpenId);
                         host.ConnectionId = user.ConnectionId;
                         host.RoomId = roomId;
                         result.Status = 303;
+                        result.Success = true;
                         result.Message = "请不要重复加入房间";
+                        if (exsitingUser != null)
+                            exsitingUser.ConnectionId = user.ConnectionId;
+                    }
+                    else if(exsitingUser != null)
+                    {
+                        exsitingUser.ConnectionId = user.ConnectionId;
+                        exsitingUser.RoomId = roomId;
+                        room.Users.Add(exsitingUser);
+                        result.Status = 200;
+                        result.Success = true;
+
                     }
                     else
                     {
-                        if (!string.IsNullOrWhiteSpace(user.UserName))
-                        {
-                            user.RoomId = roomId;
-                            room.Users.Add(user);
-                            result.Status = 200;
-                            result.Success = true;
-                        }
-                       
+                        result.Message = "您没有权限加入该房间";
                     }
                 }
             }
@@ -106,7 +121,7 @@ namespace GroupingAppWithSignalR.Services
         {
             while (true)
             {
-                Thread.Sleep(10000);
+                Thread.Sleep(60000);
                 for (int i = 0; i < StorageService.RoomList.Count(); i++)
                 {
                     if (StorageService.RoomList[i].Users.Count() == 0)

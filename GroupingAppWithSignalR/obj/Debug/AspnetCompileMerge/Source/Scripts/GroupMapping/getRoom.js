@@ -40,6 +40,7 @@
                     mmrGrouping(group1, group2, groupedList);
                     break;
             }
+            $('.battle-vs').css({ opacity: 1 });
             function randomGrouping($group1, $group2, groupedList) {
                 var median = groupedList.length / 2, html = "";
                 for (var i = 0; i < groupedList.length; i++) {
@@ -103,8 +104,6 @@
             }
             // Get the user name and store it to prepend to messages.
             $('#displayname').val(_this.UserInfo.UserName);
-            // Set initial focus to message input box.
-            $('#message').focus();
             // Start the connection.
             $.connection.hub.start().done(function () {
                 chat.server.joinRoom(_this.roomId, _this.UserInfo);
@@ -141,7 +140,7 @@
                                 chat.server.randomGrouping(_this.roomId);
                                 break;
                         }
-                        $('.battle-vs').css({ opacity: 1 });
+                        
                     })
                     .delegate('#algorithm-select', 'click', function (e) {
                         $(e.target).siblings('span').text($('#algorithm-select option:selected').text());

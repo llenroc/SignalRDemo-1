@@ -9,6 +9,7 @@ namespace GroupingAppWithSignalR.Models
     {
         public string RoomId { get; set; }
         public string RoomLeader { get; set; }
+        public string LeaderId { get; set; }
         public List<RoomUser> Users { get; set; } = new List<RoomUser>();
     }
 }
